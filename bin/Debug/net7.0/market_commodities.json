@@ -1,0 +1,17 @@
+[
+    {
+      "Name": "Gold",
+      "NetID": 1,
+      "BasePrice": 1500.0
+    },
+    {
+      "Name": "Silver",
+      "NetID": 2,
+      "BasePrice": 800.0
+    },
+    {
+      "Name": "Copper",
+      "NetID": 3,
+      "BasePrice": 300.0
+    }
+  ]
