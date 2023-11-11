@@ -7,10 +7,7 @@ public class MarketCommodities
 {
     public List<Commodity> CommoditiesList { get; private set; }
 
-    public MarketCommodities()
-    {
-        CommoditiesList = new List<Commodity>();
-    }
+    public MarketCommodities() => CommoditiesList = new List<Commodity>();
 
     // Populate the CommoditiesList from a JSON file
     public void LoadFromJsonFile(string filePath)
