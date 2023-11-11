@@ -20,16 +20,17 @@ class Program
         // Create a list of MarketInstance objects
         List<MarketInstance> markets = new List<MarketInstance>();
 
+        int marketNumber = 3;
+
         // Add multiple MarketInstances to the list
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < marketNumber; i++)
         {
             MarketInstance marketInstance = new MarketInstance();
             marketInstance.InitializeMarket("market_commodities.json");
             markets.Add(marketInstance);
-        }
+            PrintCommodityInfo(marketInstance);
 
-        // Print commodity information and track percentage change
-        PrintCommodityInfo(markets);
+        }
 
         // Update market prices and print changes
         WaitForUserInputAndUpdate(markets);
@@ -38,43 +39,55 @@ class Program
         System.IO.File.WriteAllText("local_market_prices.json", localPricesJson);
     }
 
-    static void PrintCommodityInfo(List<MarketInstance> markets)
+    static void PrintCommodityInfo(MarketInstance marketInstance)
     {
-        foreach (MarketInstance marketInstance in markets)
+        foreach (var commodity in marketInstance.MarketCommodities.CommoditiesList)
         {
-            Console.WriteLine($"Market #{markets.IndexOf(marketInstance) + 1}");
+            string commodityName = commodity.Name;
 
-            // Print commodity information
-            foreach (var commodity in marketInstance.MarketCommodities.CommoditiesList)
+            float currentPrice = marketInstance.LocalMarketPrices[commodityName];
+            float percentageChange = 0;
+            float historicChange = 0;
+            if (marketInstance.LastMarketPrices.Count != 0)
             {
-                Console.WriteLine($"{commodity.Name}: ${marketInstance.LocalMarketPrices[commodity.Name]:F2}");
+                percentageChange = CalculatePercentageChange(marketInstance.LastMarketPrices[marketInstance.LastMarketPrices.Count - 1][commodityName], currentPrice);
+                if (marketInstance.LastMarketPrices.Count > 1)
+                {
+                    historicChange = CalculatePercentageChange(marketInstance.LastMarketPrices[0][commodityName], currentPrice);
+                }
             }
-
-            Console.WriteLine();
+            if (marketInstance.LastMarketPrices.Count > 1)
+            {
+                Console.WriteLine($"{commodityName}: ${currentPrice:F2} ({(percentageChange >= 0 ? "+" : "")}{percentageChange:F2}%) {marketInstance.LastMarketPrices.Count} Week Change: ({(historicChange >= 0 ? "+" : "")}{historicChange:F2}%)");
+            }
+            else
+                Console.WriteLine($"{commodityName}: ${currentPrice:F2} ({(percentageChange >= 0 ? "+" : "")}{percentageChange:F2}%)");
         }
+    }
+
+    static float CalculatePercentageChange(float initialValue, float currentValue)
+    {
+        if (float.IsNaN(initialValue) || initialValue == 0)
+        {
+            // Avoid division by zero or NaN when there is no initial value
+            return float.NaN;
+        }
+
+        return ((currentValue - initialValue) / initialValue) * 100.0f;
     }
 
     static void UpdateAndPrintChanges(List<MarketInstance> markets)
     {
-
-        Console.WriteLine("After updating prices:");
-
-        // Print commodity information and track percentage change
+        // Update market prices
         foreach (MarketInstance marketInstance in markets)
         {
-            Console.WriteLine($"MarketInstance #{markets.IndexOf(marketInstance) + 1}");
-
-            // Print commodity information and track percentage change
-            foreach (var commodity in marketInstance.MarketCommodities.CommoditiesList)
-            {
-                float oldPrice = marketInstance.LocalMarketPrices[commodity.Name];
-                marketInstance.UpdateMarketPrices();
-                float newPrice = marketInstance.LocalMarketPrices[commodity.Name];
-                float percentageChange = ((newPrice - oldPrice) / oldPrice) * 100;
-
-                Console.WriteLine($"{commodity.Name}: ${newPrice:F2} ({percentageChange:F2}%)");
-            }
-
+            marketInstance.UpdateMarketPrices();
+        }
+        // Print commodity information and display weighted average prices
+        foreach (MarketInstance marketInstance in markets)
+        {
+            Console.WriteLine($"Market #{markets.IndexOf(marketInstance) + 1}");
+            PrintCommodityInfo(marketInstance);
             Console.WriteLine();
         }
     }

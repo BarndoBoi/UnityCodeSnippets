@@ -6,12 +6,15 @@ public class MarketInstance
 {
     public MarketCommodities MarketCommodities { get; private set; }
     public Dictionary<string, float> LocalMarketPrices { get; private set; }
+    public List<Dictionary<string, float>> LastMarketPrices { get; private set; }
+    private int HistoryLength = 12;
     private Random random = new Random();
 
     public MarketInstance()
     {
         MarketCommodities = new MarketCommodities();
         LocalMarketPrices = new Dictionary<string, float>();
+        LastMarketPrices = new List<Dictionary<string, float>>();
     }
 
     // Initialize the market instance with commodities and random initial prices
@@ -30,6 +33,12 @@ public class MarketInstance
     // Update local market prices (simulate market fluctuations)
     public void UpdateMarketPrices()
     {
+        LastMarketPrices.Add(new Dictionary<string, float>(LocalMarketPrices));
+        if (LastMarketPrices.Count > HistoryLength)
+        {
+            //Remove the oldest data
+            LastMarketPrices.RemoveAt(0);
+        }
         foreach (string commodityName in LocalMarketPrices.Keys)
         {
             // Simulate random fluctuations in prices
