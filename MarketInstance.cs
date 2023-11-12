@@ -57,7 +57,7 @@ public class MarketInstance
             // Simulate random fluctuations in prices
             float commodityBaseTrend = MarketCommodities.GetCommodityByName(commodityName).BaseFluctuationRange;
             float priceChangeFromTrend = CalculatePercentageOf(LocalMarketPrices[commodityName], commodityBaseTrend);
-            float priceChange = Helpers.GenerateRandomRange(priceChangeFromTrend * -100, priceChangeFromTrend);
+            float priceChange = Helpers.GenerateRandomRange(priceChangeFromTrend * -1, priceChangeFromTrend);
             ApplySectorTrend(commodityName, ref priceChange);
             LocalMarketPrices[commodityName] += priceChange;
         }

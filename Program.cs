@@ -160,7 +160,7 @@ class Program
             Console.WriteLine($"#{randomEvent.Name,-38}#");
             Console.WriteLine(new string('#', 40));
             Console.WriteLine($"#{"Event Text:",-38}#");
-            Console.WriteLine($"#{randomEvent.Text,-38}#");
+            Console.WriteLine($"#{randomEvent.Text,-38}");
             Console.WriteLine(new string('#', 40));
         }
     }
