@@ -28,7 +28,7 @@ public class MarketInstance
         // Initialize local market prices with random values
         foreach (Commodity commodity in MarketCommodities.CommoditiesList)
         {
-            LocalMarketPrices.Add(commodity.Name, commodity.BasePrice + GenerateRandomPrice(50.0, 200.0));
+            LocalMarketPrices.Add(commodity.Name, commodity.BasePrice + GenerateRandomRange(50.0, 200.0));
         }
 
         UpdateSectorTrends();
@@ -55,7 +55,9 @@ public class MarketInstance
         foreach (string commodityName in LocalMarketPrices.Keys)
         {
             // Simulate random fluctuations in prices
-            float priceChange = GenerateRandomPrice(-10.0f, 10.0f);
+            float commodityBaseTrend = MarketCommodities.GetCommodityByName(commodityName).BaseFluctuationRange;
+            float priceChangeFromTrend = CalculatePercentageOf(LocalMarketPrices[commodityName], commodityBaseTrend);
+            float priceChange = GenerateRandomRange(priceChangeFromTrend * -1, priceChangeFromTrend);
             ApplySectorTrend(commodityName, ref priceChange);
             LocalMarketPrices[commodityName] += priceChange;
         }
@@ -70,9 +72,9 @@ public class MarketInstance
                 continue;
             else
             {
-                SectorTrend.Add(commodity.Sector, GenerateRandomPrice(-10f, 10f));
+                SectorTrend.Add(commodity.Sector, GenerateRandomRange(-10f, 10f));
                 var percent = SectorTrend[commodity.Sector];
-                Console.WriteLine(commodity.Sector + " is now " + percent);1
+                //Console.WriteLine(commodity.Sector + " is now " + percent);
             }
         }
     }
@@ -102,9 +104,25 @@ public class MarketInstance
         System.IO.File.WriteAllText("local_market_prices.json", pricesJson);
     }
 
-    private float GenerateRandomPrice(double minValue, double maxValue)
+    private float GenerateRandomRange(double minValue, double maxValue)
     {
         return (float)(minValue + (maxValue - minValue) * random.NextDouble());
+    }
+
+    public static float CalculatePercentage(float part, float whole)
+    {
+        if (whole == 0)
+        {
+            // Avoid division by zero
+            return float.NaN;
+        }
+
+        return (part / whole) * 100.0f;
+    }
+
+    public static float CalculatePercentageOf(float number, float percentage)
+    {
+        return (percentage / 100.0f) * number;
     }
 
 }

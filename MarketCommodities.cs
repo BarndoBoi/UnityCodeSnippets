@@ -36,4 +36,20 @@ public class MarketCommodities
             Console.WriteLine($"Error exporting to JSON file: {ex.Message}");
         }
     }
+
+    public Commodity GetCommodityByName(string commodityName)
+    {
+        foreach (Commodity commodity in CommoditiesList)
+        {
+            if (commodity.Name == commodityName)
+            {
+                // Commodity with the specified name found
+                return commodity;
+            }
+        }
+
+        // Commodity with the specified name not found
+        Console.WriteLine($"Commodity with name '{commodityName}' not found.");
+        return null;
+    }
 }

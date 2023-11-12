@@ -20,7 +20,7 @@ class Program
         // Create a list of MarketInstance objects
         List<MarketInstance> markets = new List<MarketInstance>();
 
-        int marketNumber = 3;
+        int marketNumber = 1;
 
         // Add multiple MarketInstances to the list
         for (int i = 0; i < marketNumber; i++)
