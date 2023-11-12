@@ -28,7 +28,7 @@ public class MarketInstance
         // Initialize local market prices with random values
         foreach (Commodity commodity in MarketCommodities.CommoditiesList)
         {
-            LocalMarketPrices.Add(commodity.Name, commodity.BasePrice + GenerateRandomRange(50.0, 200.0));
+            LocalMarketPrices.Add(commodity.Name, commodity.BasePrice + Helpers.GenerateRandomRange(750.0, 1200.0));
         }
 
         UpdateSectorTrends();
@@ -57,7 +57,7 @@ public class MarketInstance
             // Simulate random fluctuations in prices
             float commodityBaseTrend = MarketCommodities.GetCommodityByName(commodityName).BaseFluctuationRange;
             float priceChangeFromTrend = CalculatePercentageOf(LocalMarketPrices[commodityName], commodityBaseTrend);
-            float priceChange = GenerateRandomRange(priceChangeFromTrend * -1, priceChangeFromTrend);
+            float priceChange = Helpers.GenerateRandomRange(priceChangeFromTrend * -100, priceChangeFromTrend);
             ApplySectorTrend(commodityName, ref priceChange);
             LocalMarketPrices[commodityName] += priceChange;
         }
@@ -72,7 +72,7 @@ public class MarketInstance
                 continue;
             else
             {
-                SectorTrend.Add(commodity.Sector, GenerateRandomRange(-10f, 10f));
+                SectorTrend.Add(commodity.Sector, Helpers.GenerateRandomRange(-375f, 3f));
                 var percent = SectorTrend[commodity.Sector];
                 //Console.WriteLine(commodity.Sector + " is now " + percent);
             }
@@ -102,11 +102,6 @@ public class MarketInstance
         // Export local market prices data
         string pricesJson = JsonSerializer.Serialize(LocalMarketPrices);
         System.IO.File.WriteAllText("local_market_prices.json", pricesJson);
-    }
-
-    private float GenerateRandomRange(double minValue, double maxValue)
-    {
-        return (float)(minValue + (maxValue - minValue) * random.NextDouble());
     }
 
     public static float CalculatePercentage(float part, float whole)
