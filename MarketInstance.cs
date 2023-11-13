@@ -8,6 +8,9 @@ public class MarketInstance
     public Dictionary<string, float> LocalMarketPrices { get; private set; }
     public List<Dictionary<string, float>> LastMarketPrices { get; private set; }
     public Dictionary<string, float> SectorTrend { get; private set; }
+    public int LocationId { get; set; }
+    public string Name { get; set; }
+
     private int updateCounter = 0;
     private int HistoryLength = 12;
     private Random random = new Random();
@@ -28,7 +31,7 @@ public class MarketInstance
         // Initialize local market prices with random values
         foreach (Commodity commodity in MarketCommodities.CommoditiesList)
         {
-            LocalMarketPrices.Add(commodity.Name, commodity.BasePrice + Helpers.GenerateRandomRange(750.0, 1200.0));
+            LocalMarketPrices.Add(commodity.Name, commodity.BasePrice + Helpers.GenerateRandomRange(50.0, 100.0));
         }
 
         UpdateSectorTrends();
@@ -56,7 +59,7 @@ public class MarketInstance
         {
             // Simulate random fluctuations in prices
             float commodityBaseTrend = MarketCommodities.GetCommodityByName(commodityName).BaseFluctuationRange;
-            float priceChangeFromTrend = CalculatePercentageOf(LocalMarketPrices[commodityName], commodityBaseTrend);
+            float priceChangeFromTrend = Helpers.CalculatePercentageOf(LocalMarketPrices[commodityName], commodityBaseTrend);
             float priceChange = Helpers.GenerateRandomRange(priceChangeFromTrend * -1, priceChangeFromTrend);
             ApplySectorTrend(commodityName, ref priceChange);
             LocalMarketPrices[commodityName] += priceChange;
@@ -72,9 +75,7 @@ public class MarketInstance
                 continue;
             else
             {
-                SectorTrend.Add(commodity.Sector, Helpers.GenerateRandomRange(-375f, 3f));
-                var percent = SectorTrend[commodity.Sector];
-                //Console.WriteLine(commodity.Sector + " is now " + percent);
+                SectorTrend.Add(commodity.Sector, Helpers.GenerateRandomRange(-5f, 5f));
             }
         }
     }
@@ -102,22 +103,6 @@ public class MarketInstance
         // Export local market prices data
         string pricesJson = JsonSerializer.Serialize(LocalMarketPrices);
         System.IO.File.WriteAllText("local_market_prices.json", pricesJson);
-    }
-
-    public static float CalculatePercentage(float part, float whole)
-    {
-        if (whole == 0)
-        {
-            // Avoid division by zero
-            return float.NaN;
-        }
-
-        return (part / whole) * 100.0f;
-    }
-
-    public static float CalculatePercentageOf(float number, float percentage)
-    {
-        return (percentage / 100.0f) * number;
     }
 
 }

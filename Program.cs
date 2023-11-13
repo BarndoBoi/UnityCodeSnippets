@@ -7,6 +7,7 @@ class Program
     private static int globalTrend = 0;
     private static int updateCounter = 0;
     private static int ticksToRollEvents = 3;
+    private static int marketNumber = 1;
 
     static void Main()
     {
@@ -26,8 +27,10 @@ class Program
         // Create a list of MarketInstance objects
         List<MarketInstance> markets = new List<MarketInstance>();
 
-        //List for holding some sample events
+        //Graph code tests
+        Tests.RunPathfindingExample();
 
+        //Add some sample market events to the list
 
         //marketEvents.Add(new Event(1, "Market Boom", "Stocks surge to record highs as investors celebrate unprecedented gains.", 10, 5));
         marketEvents.Add(new Event(2, "Market Crash", "Panic ensues as stock prices plummet, wiping out trillions in market value.", 5, -8));
@@ -47,15 +50,12 @@ class Program
         marketEvents.Add(new Event(13, "Textile Factory Fire", "A series of devastating fires in textile factories causes significant losses for investors and insurers.", 12, -7));
         marketEvents.Add(new Event(14, "Currency Devaluation", "Government decisions lead to currency devaluation, causing turmoil in financial markets and trade.", 15, -8));
 
-
-        // Export events to a file
-
         // Export events to a file
         ExportEvents("market_events.json", marketEvents);
 
-        int marketNumber = 1;
+        
 
-        // Add multiple MarketInstances to the list
+        // Add MarketInstances to the list up to the marketNumber
         for (int i = 0; i < marketNumber; i++)
         {
             MarketInstance marketInstance = new MarketInstance();
