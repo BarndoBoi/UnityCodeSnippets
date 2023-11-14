@@ -8,6 +8,7 @@ public class MarketInstance
     public Dictionary<string, float> LocalMarketPrices { get; private set; }
     public List<Dictionary<string, float>> LastMarketPrices { get; private set; }
     public Dictionary<string, float> SectorTrend { get; private set; }
+    public Inventory MarketInventory { get; } = new Inventory();
     public int LocationId { get; set; }
     public string Name { get; set; }
 
@@ -57,7 +58,7 @@ public class MarketInstance
         }
         foreach (string commodityName in LocalMarketPrices.Keys)
         {
-            // Simulate random fluctuations in prices
+            //Simulate random fluctuations in prices
             float commodityBaseTrend = MarketCommodities.GetCommodityByName(commodityName).BaseFluctuationRange;
             float priceChangeFromTrend = Helpers.CalculatePercentageOf(LocalMarketPrices[commodityName], commodityBaseTrend);
             float priceChange = Helpers.GenerateRandomRange(priceChangeFromTrend * -1, priceChangeFromTrend);

@@ -28,27 +28,23 @@ class Program
         List<MarketInstance> markets = new List<MarketInstance>();
 
         //Graph code tests
-        Tests.RunPathfindingExample();
+        //Tests.RunPathfindingExample();
 
         //Add some sample market events to the list
 
-        //marketEvents.Add(new Event(1, "Market Boom", "Stocks surge to record highs as investors celebrate unprecedented gains.", 10, 5));
+        marketEvents.Add(new Event(1, "Market Boom", "Stocks surge to record highs as investors celebrate unprecedented gains.", 10, 5));
         marketEvents.Add(new Event(2, "Market Crash", "Panic ensues as stock prices plummet, wiping out trillions in market value.", 5, -8));
-        marketEvents.Add(new Event(4, "Economic Recession", "Global economic downturn sends shockwaves through financial markets.", 15, -6));
-        //marketEvents.Add(new Event(1, "Railway Mania", "Investors caught up in the excitement of the railway boom, driving up stock prices to dizzying heights.", 10, 5));
-        marketEvents.Add(new Event(2, "Economic Downturn", "Economic woes sweep through the city, leading to a market downturn and financial hardship.", 5, -8));
-        //marketEvents.Add(new Event(3, "Colonial Discovery", "Reports of a prosperous colony spark investment fever, fueling hopes of great returns.", 8, 3));
-        //marketEvents.Add(new Event(4, "Industrial Innovation", "A wave of new inventions and industrial breakthroughs revitalizes the market and boosts investor confidence.", 15, 6));
-        marketEvents.Add(new Event(5, "Banking Panic", "A series of bank failures triggers widespread panic among investors and depositors.", 12, -7));
-        marketEvents.Add(new Event(6, "Cotton Famine", "A shortage of cotton due to the American Civil War leads to economic hardship and layoffs in textile industries.", 10, -5));
-        marketEvents.Add(new Event(7, "Opium Crisis", "Trade imbalances and the Opium Wars contribute to a financial crisis with repercussions in global markets.", 8, -4));
-        marketEvents.Add(new Event(8, "Shipwreck Scandal", "A scandal involving fraudulent insurance claims for shipwrecks causes a downturn in maritime investments.", 15, -6));
-        marketEvents.Add(new Event(9, "Irish Potato Blight", "The Irish Potato Famine disrupts agricultural markets and leads to economic repercussions throughout the empire.", 10, -8));
+        marketEvents.Add(new Event(3, "Railway Mania", "Investors caught up in the excitement of the railway boom, driving up stock prices to dizzying heights.", 10, 5));
+        marketEvents.Add(new Event(4, "Economic Downturn", "Economic woes sweep through the city, leading to a market downturn and financial hardship.", 5, -8));
+        marketEvents.Add(new Event(5, "Colonial Discovery", "Reports of a prosperous colony spark investment fever, fueling hopes of great returns.", 8, 3));
+        marketEvents.Add(new Event(6, "Industrial Innovation", "A wave of new inventions and industrial breakthroughs revitalizes the market and boosts investor confidence.", 15, 6));
+        marketEvents.Add(new Event(7, "Banking Panic", "A series of bank failures triggers widespread panic among investors and depositors.", 12, -7));
+        marketEvents.Add(new Event(8, "Opium Crisis", "Trade imbalances and Opium Wars contribute to a financial crisis with repercussions in global markets.", 8, -4));
+        marketEvents.Add(new Event(9, "Potato Blight", "The Potato Famine disrupts agricultural markets and leads to economic repercussions throughout the empire.", 10, -8));
         marketEvents.Add(new Event(10, "Railway Debacle", "Speculative investments in poorly planned railway projects result in financial ruin for many investors.", 12, -9));
-        marketEvents.Add(new Event(11, "Diamond Mine Collapse", "A collapse in diamond prices and revelations of fraud lead to a crisis in diamond investments.", 8, -3));
-        marketEvents.Add(new Event(12, "Tea Tariff Troubles", "Tariff disputes and changes in tea import policies create uncertainty and negatively impact tea-related investments.", 10, -4));
-        marketEvents.Add(new Event(13, "Textile Factory Fire", "A series of devastating fires in textile factories causes significant losses for investors and insurers.", 12, -7));
-        marketEvents.Add(new Event(14, "Currency Devaluation", "Government decisions lead to currency devaluation, causing turmoil in financial markets and trade.", 15, -8));
+        marketEvents.Add(new Event(11, "Tariff Troubles", "Tariff disputes and changes in import policies create uncertainty and negatively impact investments.", 10, -4));
+        marketEvents.Add(new Event(12, "Factory Fires", "A series of devastating fires in numerous factories causes significant losses for investors and insurers.", 12, -7));
+        marketEvents.Add(new Event(13, "Currency Devaluation", "Government decisions lead to currency devaluation, causing turmoil in financial markets and trade.", 15, -8));
 
         // Export events to a file
         ExportEvents("market_events.json", marketEvents);
