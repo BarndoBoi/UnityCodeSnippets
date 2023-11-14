@@ -18,12 +18,12 @@ public static class Helpers
     {
         Dictionary<Node, int> distance = new Dictionary<Node, int>();
         Dictionary<Node, Node> previous = new Dictionary<Node, Node>();
-        HashSet<Node> unvisitedNodes = new HashSet<Node>(startNode.ConnectedNodes.Keys);
+        HashSet<Node> unvisitedNodes = new HashSet<Node>(marketGraph.Nodes);
 
         foreach (var node in marketGraph.Nodes)
         {
-            distance[node] = int.MaxValue;
-            previous[node] = null;
+            distance.Add(node, int.MaxValue);
+            previous.Add(node, null);
         }
 
         distance[startNode] = 0;
@@ -57,13 +57,11 @@ public static class Helpers
         {
             if (distance.TryGetValue(node, out int nodeDistance) && nodeDistance < minDistance)
             {
-                Console.WriteLine("Assigning node");
                 minDistance = nodeDistance;
                 minNode = node;
             }
         }
 
-        Console.WriteLine("Value of minNode is: " + minNode);
         return minNode;
     }
 
