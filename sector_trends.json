@@ -1,0 +1,15 @@
+[
+    {
+      "SectorName": "Metals",
+      "ChangeMin": -3.0,
+      "ChangeMax": 3.0,
+      "CurrentTrend": 0.5
+    },
+    {
+      "SectorName": "Precious Metals",
+      "ChangeMin": -2.0,
+      "ChangeMax": 2.0,
+      "CurrentTrend": -1.2
+    }
+  ]
+  

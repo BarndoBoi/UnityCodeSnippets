@@ -1,7 +1,7 @@
 [
   {
     "Name": "Gold",
-    "Sector": "Precious Metal",
+    "Sector": "Precious Metals",
     "NetID": 1,
     "BasePrice": 1500,
     "Amount": 0,
@@ -10,7 +10,7 @@
   },
   {
     "Name": "Silver",
-    "Sector": "Precious Metal",
+    "Sector": "Precious Metals",
     "NetID": 2,
     "BasePrice": 800,
     "Amount": 0,
