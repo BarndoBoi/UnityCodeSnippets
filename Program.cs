@@ -22,7 +22,7 @@ class Program
         // ... Perform operations with the commodities list ...
 
         // Export the modified list back to a JSON file
-        commodities.ExportToJsonFile("updated_market_commodities.json");
+        //commodities.ExportToJsonFile("updated_market_commodities.json");
 
         // Create a list of MarketInstance objects
         List<MarketInstance> markets = new List<MarketInstance>();

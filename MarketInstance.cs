@@ -59,9 +59,8 @@ public class MarketInstance
         foreach (string commodityName in LocalMarketPrices.Keys)
         {
             //Simulate random fluctuations in prices
-            float commodityBaseTrend = MarketCommodities.GetCommodityByName(commodityName).BaseFluctuationRange;
-            float priceChangeFromTrend = Helpers.CalculatePercentageOf(LocalMarketPrices[commodityName], commodityBaseTrend);
-            float priceChange = Helpers.GenerateRandomRange(priceChangeFromTrend * -1, priceChangeFromTrend);
+            Commodity commodity = MarketCommodities.GetCommodityByName(commodityName);
+            float priceChange = Helpers.GenerateRandomRange(commodity.ChangeRateMin, commodity.ChangeRateMax);
             ApplySectorTrend(commodityName, ref priceChange);
             LocalMarketPrices[commodityName] += priceChange;
         }

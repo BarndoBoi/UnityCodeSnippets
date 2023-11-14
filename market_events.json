@@ -1,0 +1,93 @@
+[
+  {
+    "EventID": 1,
+    "Name": "Market Boom",
+    "Text": "Stocks surge to record highs as investors celebrate unprecedented gains.",
+    "ChanceInOneHundred": 10,
+    "GlobalTrend": 5
+  },
+  {
+    "EventID": 2,
+    "Name": "Market Crash",
+    "Text": "Panic ensues as stock prices plummet, wiping out trillions in market value.",
+    "ChanceInOneHundred": 5,
+    "GlobalTrend": -8
+  },
+  {
+    "EventID": 3,
+    "Name": "Railway Mania",
+    "Text": "Investors caught up in the excitement of the railway boom, driving up stock prices to dizzying heights.",
+    "ChanceInOneHundred": 10,
+    "GlobalTrend": 5
+  },
+  {
+    "EventID": 4,
+    "Name": "Economic Downturn",
+    "Text": "Economic woes sweep through the city, leading to a market downturn and financial hardship.",
+    "ChanceInOneHundred": 5,
+    "GlobalTrend": -8
+  },
+  {
+    "EventID": 5,
+    "Name": "Colonial Discovery",
+    "Text": "Reports of a prosperous colony spark investment fever, fueling hopes of great returns.",
+    "ChanceInOneHundred": 8,
+    "GlobalTrend": 3
+  },
+  {
+    "EventID": 6,
+    "Name": "Industrial Innovation",
+    "Text": "A wave of new inventions and industrial breakthroughs revitalizes the market and boosts investor confidence.",
+    "ChanceInOneHundred": 15,
+    "GlobalTrend": 6
+  },
+  {
+    "EventID": 7,
+    "Name": "Banking Panic",
+    "Text": "A series of bank failures triggers widespread panic among investors and depositors.",
+    "ChanceInOneHundred": 12,
+    "GlobalTrend": -7
+  },
+  {
+    "EventID": 8,
+    "Name": "Opium Crisis",
+    "Text": "Trade imbalances and Opium Wars contribute to a financial crisis with repercussions in global markets.",
+    "ChanceInOneHundred": 8,
+    "GlobalTrend": -4
+  },
+  {
+    "EventID": 9,
+    "Name": "Potato Blight",
+    "Text": "The Potato Famine disrupts agricultural markets and leads to economic repercussions throughout the empire.",
+    "ChanceInOneHundred": 10,
+    "GlobalTrend": -8
+  },
+  {
+    "EventID": 10,
+    "Name": "Railway Debacle",
+    "Text": "Speculative investments in poorly planned railway projects result in financial ruin for many investors.",
+    "ChanceInOneHundred": 12,
+    "GlobalTrend": -9
+  },
+  {
+    "EventID": 11,
+    "Name": "Tariff Troubles",
+    "Text": "Tariff disputes and changes in import policies create uncertainty and negatively impact investments.",
+    "ChanceInOneHundred": 10,
+    "GlobalTrend": -4
+  },
+  {
+    "EventID": 12,
+    "Name": "Factory Fires",
+    "Text": "A series of devastating fires in numerous factories causes significant losses for investors and insurers.",
+    "ChanceInOneHundred": 12,
+    "GlobalTrend": -7
+  },
+  {
+    "EventID": 13,
+    "Name": "Currency Devaluation",
+    "Text": "Government decisions lead to currency devaluation, causing turmoil in financial markets and trade.",
+    "ChanceInOneHundred": 15,
+    "GlobalTrend": -8
+  }
+]
