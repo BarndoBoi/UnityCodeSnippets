@@ -96,4 +96,18 @@ public static class Helpers
     {
         return (percentage / 100.0f) * number;
     }
+
+    public static float CalculatePercentageChange(float lastPrice, float currentPrice)
+    {
+        if (lastPrice == 0)
+        {
+            // Avoid division by zero if lastPrice is zero
+            return currentPrice >= 0 ? 100.0f : -100.0f;
+        }
+
+        // Calculate percentage change formula: ((current - last) / |last|) * 100
+        float percentageChange = ((currentPrice - lastPrice) / Math.Abs(lastPrice)) * 100.0f;
+
+        return percentageChange;
+    }
 }

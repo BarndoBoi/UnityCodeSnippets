@@ -81,11 +81,7 @@ public class MarketInstance
         SectorTrends.Clear();
         SectorTrends.AddRange(sectorTrends);
 
-        Console.WriteLine("Sector trends imported successfully. Contents:");
-        foreach (var trend in SectorTrends)
-        {
-            Console.WriteLine($"SectorName: {trend.SectorName}, ChangeMin: {trend.ChangeMin}, ChangeMax: {trend.ChangeMax}, CurrentTrend: {trend.CurrentTrend}");
-        }
+        Console.WriteLine("Sector trends imported successfully.");
     }
     catch (FileNotFoundException)
     {

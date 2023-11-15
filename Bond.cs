@@ -9,8 +9,11 @@ public class Bond
     public int MaturityPeriod { get; set; }
     public int RemainingPeriods { get; private set; }
 
+    // Custom delegate type for handling bond maturity
+    public delegate void BondMaturedDelegate(Bond bond);
+
     // Event to be triggered when the bond matures
-    public event EventHandler BondMatured;
+    private BondMaturedDelegate onBondMatured;
 
     public Bond(string name, float faceValue, float purchasePrice, int maturityPeriod)
     {
@@ -41,8 +44,8 @@ public class Bond
         {
             Console.WriteLine($"Bond '{Name}' has matured!");
 
-            // Trigger BondMatured event
-            OnBondMatured(EventArgs.Empty);
+            // Trigger onBondMatured delegate
+            onBondMatured?.Invoke(this);
         }
         else
         {
@@ -50,9 +53,15 @@ public class Bond
         }
     }
 
-    protected virtual void OnBondMatured(EventArgs e)
+    // Subscribe a method to the onBondMatured delegate
+    public void SubscribeToMaturity(BondMaturedDelegate handler)
     {
-        // Trigger the BondMatured event
-        BondMatured?.Invoke(this, e);
+        onBondMatured += handler;
+    }
+
+    // Unsubscribe a method from the onBondMatured delegate
+    public void UnsubscribeFromMaturity(BondMaturedDelegate handler)
+    {
+        onBondMatured -= handler;
     }
 }

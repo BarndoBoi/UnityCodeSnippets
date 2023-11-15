@@ -4,9 +4,10 @@ class Program
 {
 
     private static List<Event> marketEvents = new List<Event>();
+    private static BondsMarket bonds = new BondsMarket();
     private static int globalTrend = 0;
     private static int updateCounter = 0;
-    private static int ticksToRollEvents = 3;
+    private static int ticksToRollEvents = 4;
     private static int marketNumber = 1;
 
     static void Main()
@@ -27,29 +28,24 @@ class Program
         // Create a list of MarketInstance objects
         List<MarketInstance> markets = new List<MarketInstance>();
 
+        //Example bonds for now
+        Bond bond1 = new Bond("Bond A", 1000, 950, 5);
+        Bond bond2 = new Bond("Bond B", 1200, 1100, 4);
+        Bond bond3 = new Bond("Bond C", 800, 750, 6);
+        bonds.IssueBond(bond1);
+        bonds.IssueBond(bond2);
+        bonds.IssueBond(bond3);
+
         //Graph code tests
         //Tests.RunPathfindingExample();
 
-        //Add some sample market events to the list
-
-        marketEvents.Add(new Event(1, "Market Boom", "Stocks surge to record highs as investors celebrate unprecedented gains.", 10, 5));
-        marketEvents.Add(new Event(2, "Market Crash", "Panic ensues as stock prices plummet, wiping out trillions in market value.", 5, -8));
-        marketEvents.Add(new Event(3, "Railway Mania", "Investors caught up in the excitement of the railway boom, driving up stock prices to dizzying heights.", 10, 5));
-        marketEvents.Add(new Event(4, "Economic Downturn", "Economic woes sweep through the city, leading to a market downturn and financial hardship.", 5, -8));
-        marketEvents.Add(new Event(5, "Colonial Discovery", "Reports of a prosperous colony spark investment fever, fueling hopes of great returns.", 8, 3));
-        marketEvents.Add(new Event(6, "Industrial Innovation", "A wave of new inventions and industrial breakthroughs revitalizes the market and boosts investor confidence.", 15, 6));
-        marketEvents.Add(new Event(7, "Banking Panic", "A series of bank failures triggers widespread panic among investors and depositors.", 12, -7));
-        marketEvents.Add(new Event(8, "Opium Crisis", "Trade imbalances and Opium Wars contribute to a financial crisis with repercussions in global markets.", 8, -4));
-        marketEvents.Add(new Event(9, "Potato Blight", "The Potato Famine disrupts agricultural markets and leads to economic repercussions throughout the empire.", 10, -8));
-        marketEvents.Add(new Event(10, "Railway Debacle", "Speculative investments in poorly planned railway projects result in financial ruin for many investors.", 12, -9));
-        marketEvents.Add(new Event(11, "Tariff Troubles", "Tariff disputes and changes in import policies create uncertainty and negatively impact investments.", 10, -4));
-        marketEvents.Add(new Event(12, "Factory Fires", "A series of devastating fires in numerous factories causes significant losses for investors and insurers.", 12, -7));
-        marketEvents.Add(new Event(13, "Currency Devaluation", "Government decisions lead to currency devaluation, causing turmoil in financial markets and trade.", 15, -8));
+        //Fetch saved events and import
+        marketEvents = ImportEvents("market_events.json");
 
         // Export events to a file
-        ExportEvents("market_events.json", marketEvents);
+        //ExportEvents("market_events.json", marketEvents); //Commented out for now until new events need to be made
 
-        
+
 
         // Add MarketInstances to the list up to the marketNumber
         for (int i = 0; i < marketNumber; i++)
@@ -76,10 +72,13 @@ class Program
             float historicChange = 0;
             if (marketInstance.LastMarketPrices.Count != 0)
             {
-                percentageChange = CalculatePercentageChange(marketInstance.LastMarketPrices[marketInstance.LastMarketPrices.Count - 1][commodityName], currentPrice);
+                var lastPrice = marketInstance.LastMarketPrices[marketInstance.LastMarketPrices.Count -1][commodityName];
+                var oldestPrice = marketInstance.LastMarketPrices[0][commodityName];
+                percentageChange = Helpers.CalculatePercentageChange(marketInstance.LastMarketPrices[marketInstance.LastMarketPrices.Count - 1][commodityName], currentPrice);
+                Console.WriteLine($"Last price for {commodity.Name} is {marketInstance.LastMarketPrices[marketInstance.LastMarketPrices.Count - 1][commodityName]}");
                 if (marketInstance.LastMarketPrices.Count > 1)
                 {
-                    historicChange = CalculatePercentageChange(marketInstance.LastMarketPrices[0][commodityName], currentPrice);
+                    historicChange = Helpers.CalculatePercentageChange(marketInstance.LastMarketPrices[0][commodityName], currentPrice);
                 }
             }
             if (marketInstance.LastMarketPrices.Count > 1)
@@ -89,17 +88,6 @@ class Program
             else
                 Console.WriteLine($"{commodityName}: ${currentPrice:F2} ({(percentageChange >= 0 ? "+" : "")}{percentageChange:F2}%)");
         }
-    }
-
-    static float CalculatePercentageChange(float initialValue, float currentValue)
-    {
-        if (float.IsNaN(initialValue) || initialValue == 0)
-        {
-            // Avoid division by zero or NaN when there is no initial value
-            return float.NaN;
-        }
-
-        return ((currentValue - initialValue) / initialValue) * 100.0f;
     }
 
     static void UpdateAndPrintChanges(List<MarketInstance> markets)
@@ -122,19 +110,28 @@ class Program
     {
         while (true)
         {
-            Console.WriteLine("Press '1' to update prices again. Press any other key to exit.");
+            Console.WriteLine("1 - Update and Print");
+            Console.WriteLine("2 - View Bonds Market");
+            Console.WriteLine("Press any other key to exit.");
+
             string userInput = Console.ReadLine();
 
-            if (userInput == "1")
+            switch (userInput)
             {
-                CheckEventTrigger();
-                UpdateAndPrintChanges(markets);
-                updateCounter++;
-            }
-            else
-            {
-                Console.WriteLine("Exiting program.");
-                break;
+                case "1":
+                    // Update and print logic
+                    CheckEventTrigger();
+                    UpdateAndPrintChanges(markets);
+                    if (bonds.DoUpdate)
+                        bonds.UpdateBonds();
+                    break;
+                case "2":
+                    // View Bonds Market logic
+                    bonds.DisplayBonds();
+                    break;
+                default:
+                    Console.WriteLine("Unrecognized input, exiting program.");
+                    return;
             }
         }
     }
