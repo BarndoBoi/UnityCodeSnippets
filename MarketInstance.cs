@@ -122,7 +122,10 @@ public class MarketInstance
         {
             Commodity commodity = MarketCommodities.GetCommodityByName(commodityName);
             SectorTrend sectorTrend = SectorTrends.Find(st => st.SectorName == commodity.Sector);
-            priceChange *= 1 + sectorTrend.CurrentTrend / 100.0f;
+            if (sectorTrend == null)
+                Console.WriteLine("Error finding entry for sectorTrend named: " + commodity.Sector);
+            else
+                priceChange *= 1 + sectorTrend.CurrentTrend / 100.0f;
         }
     }
 

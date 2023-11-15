@@ -7,7 +7,7 @@ class Program
     private static BondsMarket bonds = new BondsMarket();
     private static int globalTrend = 0;
     private static int updateCounter = 0;
-    private static int ticksToRollEvents = 4;
+    private static int ticksToRollEvents = 10;
     private static int marketNumber = 1;
     private static Assets playerAssets = new Assets();
 
@@ -30,12 +30,15 @@ class Program
         List<MarketInstance> markets = new List<MarketInstance>();
 
         //Example bonds for now
-        Bond bond1 = new Bond("Bond A", 1000, 950, 5);
-        Bond bond2 = new Bond("Bond B", 1200, 1100, 4);
-        Bond bond3 = new Bond("Bond C", 800, 750, 6);
+        Bond bond1 = new Bond("Bond A", 950, 5, -0.05f, 0.05f);
+        Bond bond2 = new Bond("Bond B", 1100, 4, -0.05f, 0.05f);
+        Bond bond3 = new Bond("Bond C", 750, 6, -0.05f, 0.05f);
         bonds.IssueBond(bond1);
         bonds.IssueBond(bond2);
         bonds.IssueBond(bond3);
+
+        //Start the user with some money
+        playerAssets.ChangeLiquidMoney(5000);
 
         //Graph code tests
         //Tests.RunPathfindingExample();
@@ -73,10 +76,9 @@ class Program
             float historicChange = 0;
             if (marketInstance.LastMarketPrices.Count != 0)
             {
-                var lastPrice = marketInstance.LastMarketPrices[marketInstance.LastMarketPrices.Count -1][commodityName];
+                var lastPrice = marketInstance.LastMarketPrices[marketInstance.LastMarketPrices.Count - 1][commodityName];
                 var oldestPrice = marketInstance.LastMarketPrices[0][commodityName];
                 percentageChange = Helpers.CalculatePercentageChange(marketInstance.LastMarketPrices[marketInstance.LastMarketPrices.Count - 1][commodityName], currentPrice);
-                Console.WriteLine($"Last price for {commodity.Name} is {marketInstance.LastMarketPrices[marketInstance.LastMarketPrices.Count - 1][commodityName]}");
                 if (marketInstance.LastMarketPrices.Count > 1)
                 {
                     historicChange = Helpers.CalculatePercentageChange(marketInstance.LastMarketPrices[0][commodityName], currentPrice);
@@ -113,6 +115,7 @@ class Program
         {
             Console.WriteLine("1 - Update and Print");
             Console.WriteLine("2 - View Bonds Market");
+            Console.WriteLine("3 - Buy Bond");
             Console.WriteLine("Press any other key to exit.");
 
             string userInput = Console.ReadLine();
@@ -129,6 +132,10 @@ class Program
                 case "2":
                     // View Bonds Market logic
                     bonds.DisplayBonds();
+                    break;
+                case "3":
+                    // Buy Bond logic
+                    BuyBond();
                     break;
                 default:
                     Console.WriteLine("Unrecognized input, exiting program.");
@@ -156,6 +163,39 @@ class Program
             Console.WriteLine($"#{"Event Text:",-38}#");
             Console.WriteLine($"#{randomEvent.Text,-38}");
             Console.WriteLine(new string('#', 40));
+        }
+    }
+
+    static void BuyBond()
+    {
+        // Display available bonds
+        bonds.DisplayBonds();
+
+        // Prompt user to choose a bond
+        Console.WriteLine("Enter the index of the bond you want to buy: ");
+        if (int.TryParse(Console.ReadLine(), out int bondIndex) && bondIndex >= 0 && bondIndex <= bonds.AvailibleBondsCount)
+        {
+            // Get the selected bond
+            Bond selectedBond = bonds.GetAvailibleBond(bondIndex - 1); //Offset input so index starts at zero
+
+            // Check if the player has enough liquid money to buy the bond
+            if (playerAssets.liquidMoney >= selectedBond.PurchasePrice)
+            {
+                // Purchase the bond
+                playerAssets.ChangeLiquidMoney(-selectedBond.PurchasePrice); // Deduct the purchase price
+                playerAssets.AddOwnedBond(selectedBond); // Add the face value to assets in bonds
+
+                // Remove the bond from available bonds and add it to purchased bonds
+                bonds.PurchaseBond(selectedBond, playerAssets);
+            }
+            else
+            {
+                Console.WriteLine("Insufficient funds to buy the selected bond.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid input. Please enter a valid bond index.");
         }
     }
 

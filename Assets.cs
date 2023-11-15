@@ -1,9 +1,10 @@
 public class Assets
 {
     // Fields
-    private float liquidMoney;
-    private float assetsInBonds;
-    private float assetsInInventory;
+    public float liquidMoney {private set; get;}
+    public float assetsInBonds {private set; get;}
+    public float assetsInInventory {private set; get;}
+    private List<Bond> ownedBonds = new List<Bond>();
 
     // Properties
     public float NetTotal => liquidMoney + assetsInBonds + assetsInInventory;
@@ -17,14 +18,25 @@ public class Assets
     }
 
     // Methods to update values
-    public void AddLiquidMoney(float amount)
+    public void ChangeLiquidMoney(float amount)
     {
         liquidMoney += amount;
+        Console.WriteLine($"Adding {amount} to liquid money. Net total is now {NetTotal}");
     }
 
-    public void AddAssetsInBonds(float amount)
+    public void AddOwnedBond(Bond bond)
     {
-        assetsInBonds += amount;
+        ownedBonds.Add(bond);
+    }
+
+    public float GetBondsValue()
+    {
+        assetsInBonds = 0;
+        foreach (Bond bond in ownedBonds)
+        {
+            assetsInBonds += bond.CurrentValue;
+        }
+        return assetsInBonds;
     }
 
     public void AddAssetsInInventory(float amount)

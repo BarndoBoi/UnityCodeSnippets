@@ -3,11 +3,14 @@ using System;
 public class Bond
 {
     public string Name { get; set; }
-    public float FaceValue { get; set; }
     public float PurchasePrice { get; set; }
     public float CurrentValue { get; private set; }
     public int MaturityPeriod { get; set; }
     public int RemainingPeriods { get; private set; }
+    public float MinRange { get; set; }
+    public float MaxRange { get; set; }
+    public Assets owned;
+    private Random random = new Random();
 
     // Custom delegate type for handling bond maturity
     public delegate void BondMaturedDelegate(Bond bond);
@@ -15,41 +18,50 @@ public class Bond
     // Event to be triggered when the bond matures
     private BondMaturedDelegate onBondMatured;
 
-    public Bond(string name, float faceValue, float purchasePrice, int maturityPeriod)
+    public Bond(string name, float purchasePrice, int maturityPeriod, float minRange, float maxRange)
     {
         Name = name;
-        FaceValue = faceValue;
         PurchasePrice = purchasePrice;
         CurrentValue = purchasePrice; // Initial value is the purchase price
         MaturityPeriod = maturityPeriod;
         RemainingPeriods = maturityPeriod;
+        MinRange = minRange;
+        MaxRange = maxRange;
     }
 
     public void CalculateReturnRate()
     {
         // Simulate fluctuation in return rate (for demonstration purposes)
-        Random random = new Random();
-        double fluctuation = random.NextDouble() * 0.1 - 0.05; // Fluctuate between -5% and 5%
+        double fluctuation = random.NextDouble() * (MaxRange - MinRange) + MinRange; // Fluctuate between MinRange and MaxRange
         double newReturnRate = fluctuation + (CurrentValue / PurchasePrice - 1);
 
-        Console.WriteLine($"Return rate fluctuation: {fluctuation * 100:F2}%");
-        Console.WriteLine($"New Return Rate: {newReturnRate * 100:F2}%");
+        // Update CurrentValue based on the fluctuation
+        CurrentValue *= (float)(1 + newReturnRate);
     }
 
-    public void CheckMaturity()
+    public bool CheckMaturity()
     {
         RemainingPeriods--;
 
+        if (RemainingPeriods == 0)
+        {
+            return true;
+        }
+        else
+        {
+            Console.WriteLine($"Bond '{Name}' has {RemainingPeriods} periods remaining.");
+            return false;
+        }
+    }
+
+    public void MatureBond()
+    {
         if (RemainingPeriods == 0)
         {
             Console.WriteLine($"Bond '{Name}' has matured!");
 
             // Trigger onBondMatured delegate
             onBondMatured?.Invoke(this);
-        }
-        else
-        {
-            Console.WriteLine($"Bond '{Name}' has {RemainingPeriods} periods remaining.");
         }
     }
 
