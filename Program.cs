@@ -9,6 +9,7 @@ class Program
     private static int updateCounter = 0;
     private static int ticksToRollEvents = 4;
     private static int marketNumber = 1;
+    private static Assets playerAssets = new Assets();
 
     static void Main()
     {
