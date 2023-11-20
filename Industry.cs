@@ -4,21 +4,23 @@ using System.Collections.Generic;
 public class Industry
 {
     public string Name { get; set; }
-    public Commodity OutputCommodity { get; set; }
-    public int OutputAmount { get; set; }
-    public List<Commodity> InputCommodities { get; } = new List<Commodity>();
+    public Dictionary<Commodity, int> OutputCommodities { get; } = new Dictionary<Commodity, int>();
+    public Dictionary<Commodity, int> InputCommodities { get; } = new Dictionary<Commodity, int>();
     public Inventory IndustryInventory { get; } = new Inventory();
 
     public Industry(string name, Commodity outputCommodity, int outputAmount)
     {
         Name = name;
-        OutputCommodity = outputCommodity;
-        OutputAmount = outputAmount;
+        OutputCommodities.Add(outputCommodity, outputAmount);
     }
 
-    public void AddInputCommodity(Commodity inputCommodity)
+    public void AddInputCommodity(Commodity inputCommodity, int quantity)
     {
-        InputCommodities.Add(inputCommodity);
+        InputCommodities.Add(inputCommodity, quantity);
+    }
+
+    public void AddOutputCommodity(Commodity outputCommodity, int quantity){
+        OutputCommodities.Add(outputCommodity, quantity);
     }
 
     public void ProcessOutput()
@@ -27,9 +29,9 @@ public class Industry
 
         // Check if there are enough input goods in the inventory
         bool enoughInputGoods = true;
-        foreach (var inputCommodity in InputCommodities)
+        foreach (var input in InputCommodities)
         {
-            if (!IndustryInventory.RemoveGoods(inputCommodity, 1))
+            if (!IndustryInventory.RemoveGoods(input.Key, input.Value))
             {
                 enoughInputGoods = false;
                 break;
@@ -39,10 +41,16 @@ public class Industry
         // If there are enough input goods, produce the output
         if (enoughInputGoods)
         {
-            Console.WriteLine($"Producing {OutputAmount} units of {OutputCommodity.Name}");
+            foreach (var output in OutputCommodities)
+            {
+                Commodity outputCommodity = output.Key;
+                int outputQuantity = output.Value;
 
-            // Add the produced goods to the industry's inventory
-            IndustryInventory.AddGoods(OutputCommodity, OutputAmount);
+                Console.WriteLine($"Producing {outputQuantity} units of {outputCommodity.Name}");
+
+                // Add the produced goods to the industry's inventory
+                IndustryInventory.AddGoods(outputCommodity, outputQuantity);
+            }
         }
         else
         {

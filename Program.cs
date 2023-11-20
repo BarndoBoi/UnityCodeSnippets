@@ -69,27 +69,26 @@ class Program
     {
         foreach (var commodity in marketInstance.MarketCommodities.CommoditiesList)
         {
-            string commodityName = commodity.Name;
-
-            float currentPrice = marketInstance.LocalMarketPrices[commodityName];
+            float currentPrice = marketInstance.LocalMarketPrices[commodity];
             float percentageChange = 0;
             float historicChange = 0;
+
             if (marketInstance.LastMarketPrices.Count != 0)
             {
-                var lastPrice = marketInstance.LastMarketPrices[marketInstance.LastMarketPrices.Count - 1][commodityName];
-                var oldestPrice = marketInstance.LastMarketPrices[0][commodityName];
-                percentageChange = Helpers.CalculatePercentageChange(marketInstance.LastMarketPrices[marketInstance.LastMarketPrices.Count - 1][commodityName], currentPrice);
+                var lastPrice = marketInstance.LastMarketPrices[marketInstance.LastMarketPrices.Count - 1][commodity];
+                var oldestPrice = marketInstance.LastMarketPrices[0][commodity];
+                percentageChange = Helpers.CalculatePercentageChange(marketInstance.LastMarketPrices[marketInstance.LastMarketPrices.Count - 1][commodity], currentPrice);
                 if (marketInstance.LastMarketPrices.Count > 1)
                 {
-                    historicChange = Helpers.CalculatePercentageChange(marketInstance.LastMarketPrices[0][commodityName], currentPrice);
+                    historicChange = Helpers.CalculatePercentageChange(marketInstance.LastMarketPrices[0][commodity], currentPrice);
                 }
             }
             if (marketInstance.LastMarketPrices.Count > 1)
             {
-                Console.WriteLine($"{commodityName}: ${currentPrice:F2} ({(percentageChange >= 0 ? "+" : "")}{percentageChange:F2}%) {marketInstance.LastMarketPrices.Count} Week Change: ({(historicChange >= 0 ? "+" : "")}{historicChange:F2}%)");
+                Console.WriteLine($"{commodity.Name}: ${currentPrice:F2} ({(percentageChange >= 0 ? "+" : "")}{percentageChange:F2}%) {marketInstance.LastMarketPrices.Count} Week Change: ({(historicChange >= 0 ? "+" : "")}{historicChange:F2}%)");
             }
             else
-                Console.WriteLine($"{commodityName}: ${currentPrice:F2} ({(percentageChange >= 0 ? "+" : "")}{percentageChange:F2}%)");
+                Console.WriteLine($"{commodity.Name}: ${currentPrice:F2} ({(percentageChange >= 0 ? "+" : "")}{percentageChange:F2}%)");
         }
     }
 

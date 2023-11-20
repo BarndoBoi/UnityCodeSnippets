@@ -5,22 +5,22 @@ using System.Text.Json;
 public class MarketInstance
 {
     public MarketCommodities MarketCommodities { get; private set; }
-    public Dictionary<string, float> LocalMarketPrices { get; private set; }
-    public List<Dictionary<string, float>> LastMarketPrices { get; private set; }
+    public Dictionary<Commodity, float> LocalMarketPrices { get; private set; }
+    public List<Dictionary<Commodity, float>> LastMarketPrices { get; private set; }
     public List<SectorTrend> SectorTrends { get; } = new List<SectorTrend>();
     public Inventory MarketInventory { get; } = new Inventory();
+    public List<Industry> Industries { get; } = new List<Industry>();
     public int LocationId { get; set; }
     public string Name { get; set; }
 
     private int updateCounter = 0;
     private int HistoryLength = 12;
-    private Random random = new Random();
 
     public MarketInstance()
     {
         MarketCommodities = new MarketCommodities();
-        LocalMarketPrices = new Dictionary<string, float>();
-        LastMarketPrices = new List<Dictionary<string, float>>();
+        LocalMarketPrices = new Dictionary<Commodity, float>();
+        LastMarketPrices = new List<Dictionary<Commodity, float>>();
     }
 
     // Initialize the market instance with commodities and random initial prices
@@ -32,7 +32,7 @@ public class MarketInstance
         // Initialize local market prices with random values
         foreach (Commodity commodity in MarketCommodities.CommoditiesList)
         {
-            LocalMarketPrices.Add(commodity.Name, commodity.BasePrice + Helpers.GenerateRandomRange(50.0, 100.0));
+            LocalMarketPrices.Add(commodity, commodity.BasePrice + Helpers.GenerateRandomRange(50.0, 100.0));
         }
 
         ImportSectorTrends("sector_trends.json"); //Just for test purposes. Move this string into a config file or something later.
@@ -52,46 +52,45 @@ public class MarketInstance
             UpdateSectorTrends();
         }
 
-        LastMarketPrices.Add(new Dictionary<string, float>(LocalMarketPrices));
+        LastMarketPrices.Add(new Dictionary<Commodity, float>(LocalMarketPrices));
         if (LastMarketPrices.Count > HistoryLength)
         {
             //Remove the oldest data
             LastMarketPrices.RemoveAt(0);
         }
-        foreach (string commodityName in LocalMarketPrices.Keys)
+        foreach (Commodity commodity in LocalMarketPrices.Keys)
         {
             //Simulate random fluctuations in prices
-            Commodity commodity = MarketCommodities.GetCommodityByName(commodityName);
             float priceChangePercent = Helpers.GenerateRandomRange(commodity.ChangeRateMin, commodity.ChangeRateMax);
-            ApplySectorTrend(commodityName, ref priceChangePercent);
+            ApplySectorTrend(commodity, ref priceChangePercent);
             //Try applying the change as a percentage instead of a flat change
-            LocalMarketPrices[commodityName] += Helpers.CalculatePercentageOf(LocalMarketPrices[commodityName], priceChangePercent);
+            LocalMarketPrices[commodity] += Helpers.CalculatePercentageOf(LocalMarketPrices[commodity], priceChangePercent);
             //LocalMarketPrices[commodityName] += priceChangePercent;
         }
     }
 
     public void ImportSectorTrends(string jsonFilePath)
-{
-    try
     {
-        string jsonContent = File.ReadAllText(jsonFilePath);
-        List<SectorTrend> sectorTrends = JsonSerializer.Deserialize<List<SectorTrend>>(jsonContent);
+        try
+        {
+            string jsonContent = File.ReadAllText(jsonFilePath);
+            List<SectorTrend> sectorTrends = JsonSerializer.Deserialize<List<SectorTrend>>(jsonContent);
 
-        // Replace the existing list with the new one
-        SectorTrends.Clear();
-        SectorTrends.AddRange(sectorTrends);
+            // Replace the existing list with the new one
+            SectorTrends.Clear();
+            SectorTrends.AddRange(sectorTrends);
 
-        Console.WriteLine("Sector trends imported successfully.");
+            Console.WriteLine("Sector trends imported successfully.");
+        }
+        catch (FileNotFoundException)
+        {
+            Console.WriteLine($"File not found: {jsonFilePath}");
+        }
+        catch (JsonException)
+        {
+            Console.WriteLine($"Error deserializing JSON from {jsonFilePath}");
+        }
     }
-    catch (FileNotFoundException)
-    {
-        Console.WriteLine($"File not found: {jsonFilePath}");
-    }
-    catch (JsonException)
-    {
-        Console.WriteLine($"Error deserializing JSON from {jsonFilePath}");
-    }
-}
 
     public void ExportSectorTrends(string jsonFilePath)
     {
@@ -116,11 +115,10 @@ public class MarketInstance
         }
     }
 
-    private void ApplySectorTrend(string commodityName, ref float priceChange)
+    private void ApplySectorTrend(Commodity commodity, ref float priceChange)
     {
         if (MarketCommodities.CommoditiesList != null)
         {
-            Commodity commodity = MarketCommodities.GetCommodityByName(commodityName);
             SectorTrend sectorTrend = SectorTrends.Find(st => st.SectorName == commodity.Sector);
             if (sectorTrend == null)
                 Console.WriteLine("Error finding entry for sectorTrend named: " + commodity.Sector);
