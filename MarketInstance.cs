@@ -7,6 +7,9 @@ public class MarketInstance
     public MarketCommodities MarketCommodities { get; private set; }
     public Dictionary<Commodity, float> LocalMarketPrices { get; private set; }
     public List<Dictionary<Commodity, float>> LastMarketPrices { get; private set; }
+    public MarketPrices MarketPrices { get; private set; }
+    public Dictionary<Commodity, int> localCommodityBalance = new Dictionary<Commodity, int>();
+    private Dictionary<Commodity, int> lastCommodityBalance;
     public List<SectorTrend> SectorTrends { get; } = new List<SectorTrend>();
     public Inventory MarketInventory { get; } = new Inventory();
     public List<Industry> Industries { get; } = new List<Industry>();
@@ -19,6 +22,7 @@ public class MarketInstance
     public MarketInstance()
     {
         MarketCommodities = new MarketCommodities();
+        MarketPrices = new MarketPrices();
         LocalMarketPrices = new Dictionary<Commodity, float>();
         LastMarketPrices = new List<Dictionary<Commodity, float>>();
     }
@@ -34,6 +38,8 @@ public class MarketInstance
         {
             LocalMarketPrices.Add(commodity, commodity.BasePrice + Helpers.GenerateRandomRange(50.0, 100.0));
         }
+
+        MarketPrices.Initialize(MarketCommodities.CommoditiesList);
 
         ImportSectorTrends("sector_trends.json"); //Just for test purposes. Move this string into a config file or something later.
 
@@ -58,7 +64,47 @@ public class MarketInstance
             //Remove the oldest data
             LastMarketPrices.RemoveAt(0);
         }
-        foreach (Commodity commodity in LocalMarketPrices.Keys)
+
+        //Calculate local industry needs
+        if (localCommodityBalance.Count != 0)
+            lastCommodityBalance = localCommodityBalance; //Only store a last balance if it exists
+        
+        localCommodityBalance.Clear();
+        foreach (Industry industry in Industries)
+        {
+            foreach (Commodity commodity in industry.ProductionRecipe.InputGoods.Keys)
+            {
+                if (localCommodityBalance.ContainsKey(commodity))
+                {
+                    localCommodityBalance[commodity] -= industry.ProductionRecipe.InputGoods[commodity]; //Subtract required inputs from the balance
+                }
+                else
+                {
+                    localCommodityBalance.Add(commodity, industry.ProductionRecipe.InputGoods[commodity] * -1); //Invert the value we add so inputs are subtractive
+                }
+            }
+            foreach (Commodity commodity in industry.ProductionRecipe.OutputGoods.Keys)
+            {
+                if (localCommodityBalance.ContainsKey(commodity))
+                {
+                    localCommodityBalance[commodity] += industry.ProductionRecipe.OutputGoods[commodity]; //Add outputs to the balance
+                }
+                else
+                {
+                    localCommodityBalance.Add(commodity, industry.ProductionRecipe.InputGoods[commodity]);
+                }
+            }
+        }
+
+        foreach (Commodity commodity in MarketCommodities.CommoditiesList)
+        {
+            //Need to check the localCommodityBalance to determine price changes from demand
+            
+            //Then need to apply the SectorTrend to the price
+            //Finally update the MarketPrices with the new value
+        }
+
+        /*foreach (Commodity commodity in LocalMarketPrices.Keys)
         {
             //Simulate random fluctuations in prices
             float priceChangePercent = Helpers.GenerateRandomRange(commodity.ChangeRateMin, commodity.ChangeRateMax);
@@ -66,7 +112,7 @@ public class MarketInstance
             //Try applying the change as a percentage instead of a flat change
             LocalMarketPrices[commodity] += Helpers.CalculatePercentageOf(LocalMarketPrices[commodity], priceChangePercent);
             //LocalMarketPrices[commodityName] += priceChangePercent;
-        }
+        }*/
     }
 
     public void ImportSectorTrends(string jsonFilePath)
