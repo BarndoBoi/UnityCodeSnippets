@@ -111,3 +111,15 @@ public static class Helpers
         return percentageChange;
     }
 }
+
+public class ImportData
+{
+    public List<CommodityAmountEntry> Goods { get; set; }
+}
+
+// Private class to represent each entry in the Goods dictionary
+public class CommodityAmountEntry
+{
+    public Commodity Commodity { get; set; }
+    public int Quantity { get; set; }
+}

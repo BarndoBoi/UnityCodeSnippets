@@ -1,60 +1,67 @@
-using System;
-using System.Collections.Generic;
+using System.Text.Json;
 
 public class Industry
 {
-    public string Name { get; set; }
-    public Dictionary<Commodity, int> OutputCommodities { get; } = new Dictionary<Commodity, int>();
-    public Dictionary<Commodity, int> InputCommodities { get; } = new Dictionary<Commodity, int>();
-    public Inventory IndustryInventory { get; } = new Inventory();
 
-    public Industry(string name, Commodity outputCommodity, int outputAmount)
+    public string IndustryName { get; set; }
+    public string Sector { get; set; }
+
+    public Inventory Inventory { get; } = new Inventory();
+    public Recipe ProductionRecipe { get; } = new Recipe();
+
+    public bool TryProcessOutput(out Dictionary<Commodity, int> createdGoods)
     {
-        Name = name;
-        OutputCommodities.Add(outputCommodity, outputAmount);
-    }
-
-    public void AddInputCommodity(Commodity inputCommodity, int quantity)
-    {
-        InputCommodities.Add(inputCommodity, quantity);
-    }
-
-    public void AddOutputCommodity(Commodity outputCommodity, int quantity){
-        OutputCommodities.Add(outputCommodity, quantity);
-    }
-
-    public void ProcessOutput()
-    {
-        Console.WriteLine($"Processing output in {Name}");
-
-        // Check if there are enough input goods in the inventory
-        bool enoughInputGoods = true;
-        foreach (var input in InputCommodities)
+        if (ProductionRecipe.InputGoods.All(input => Inventory.Goods.ContainsKey(input.Key) && Inventory.Goods[input.Key] >= input.Value))
         {
-            if (!IndustryInventory.RemoveGoods(input.Key, input.Value))
+            foreach (var input in ProductionRecipe.InputGoods)
             {
-                enoughInputGoods = false;
-                break;
+                Inventory.Goods[input.Key] -= input.Value;
             }
-        }
 
-        // If there are enough input goods, produce the output
-        if (enoughInputGoods)
-        {
-            foreach (var output in OutputCommodities)
+            foreach (var output in ProductionRecipe.OutputGoods)
             {
-                Commodity outputCommodity = output.Key;
-                int outputQuantity = output.Value;
+                if (Inventory.Goods.ContainsKey(output.Key))
+                    Inventory.Goods[output.Key] += output.Value;
+                else
+                    Inventory.Goods.Add(output.Key, output.Value);
+            }
 
-                Console.WriteLine($"Producing {outputQuantity} units of {outputCommodity.Name}");
+            createdGoods = new Dictionary<Commodity, int>(ProductionRecipe.OutputGoods);
+            return true;
+        }
+        else
+        {
+            createdGoods = null;
+            return false;
+        }
+    }
 
-                // Add the produced goods to the industry's inventory
-                IndustryInventory.AddGoods(outputCommodity, outputQuantity);
+    public void ExportIndustry(string jsonFilePath)
+    {
+        var exportData = new ImportData
+        {
+            Goods = Inventory.Goods.Select(kv => new CommodityAmountEntry { Commodity = kv.Key, Quantity = kv.Value }).ToList()
+        };
+
+        string jsonString = JsonSerializer.Serialize(exportData, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(jsonFilePath, jsonString);
+    }
+
+    public void ImportIndustry(string jsonFilePath)
+    {
+        if (File.Exists(jsonFilePath))
+        {
+            string jsonString = File.ReadAllText(jsonFilePath);
+            var importData = JsonSerializer.Deserialize<ImportData>(jsonString);
+
+            foreach (var entry in importData.Goods)
+            {
+                Inventory.Goods[entry.Commodity] = entry.Quantity;
             }
         }
         else
         {
-            Console.WriteLine($"Not enough input goods to produce output in {Name}");
+            throw new FileNotFoundException("The specified JSON file was not found.", jsonFilePath);
         }
     }
 }
