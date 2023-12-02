@@ -67,7 +67,7 @@ public class MarketInstance
 
         //Calculate local industry needs
         if (localCommodityBalance.Count != 0)
-            lastCommodityBalance = localCommodityBalance; //Only store a last balance if it exists
+            lastCommodityBalance = new Dictionary<Commodity, int> (localCommodityBalance); //Only store a last balance if it exists
         
         localCommodityBalance.Clear();
         foreach (Industry industry in Industries)
@@ -99,6 +99,11 @@ public class MarketInstance
         foreach (Commodity commodity in MarketCommodities.CommoditiesList)
         {
             //Need to check the localCommodityBalance to determine price changes from demand
+            var balance = localCommodityBalance[commodity];
+            //Now I gotta figure out how to turn this into a percentage demand based on change from last balance
+            var previousBalance = 0;
+            if (lastCommodityBalance != null)
+                previousBalance = lastCommodityBalance[commodity];
             
             //Then need to apply the SectorTrend to the price
             //Finally update the MarketPrices with the new value
